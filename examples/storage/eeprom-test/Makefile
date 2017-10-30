@@ -1,7 +1,5 @@
-CONTIKI_PROJECT = udp-echo-server
-
+CONTIKI_PROJECT = eeprom-test
+CONTIKI = ../../..
 all: $(CONTIKI_PROJECT)
-
-CONTIKI = ../..
 
 include $(CONTIKI)/Makefile.include

@@ -7,7 +7,7 @@
   <project EXPORT="discard">[APPS_DIR]/collect-view</project>
   <project EXPORT="discard">[APPS_DIR]/powertracker</project>
   <simulation>
-    <title>RPL-UDP Example</title>
+    <title>RPL-UDP Example -- Packet Debug</title>
     <randomseed>generated</randomseed>
     <motedelay_us>5000000</motedelay_us>
     <radiomedium>
@@ -47,9 +47,9 @@
       org.contikios.cooja.mspmote.SkyMoteType
       <identifier>sky2</identifier>
       <description>Sky Mote Type #sky2</description>
-      <source EXPORT="discard">[CONTIKI_DIR]/examples/rpl-udp/udp-client.c</source>
-      <commands EXPORT="discard">make clean udp-client.sky TARGET=sky</commands>
-      <firmware EXPORT="copy">[CONTIKI_DIR]/examples/rpl-udp/udp-client.sky</firmware>
+      <source EXPORT="discard">[CONTIKI_DIR]/examples/rpl-udp/udp-client-packet-debug.c</source>
+      <commands EXPORT="discard">make clean udp-client-packet-debug.sky TARGET=sky</commands>
+      <firmware EXPORT="copy">[CONTIKI_DIR]/examples/rpl-udp/udp-client-packet-debug.sky</firmware>
       <moteinterface>org.contikios.cooja.interfaces.Position</moteinterface>
       <moteinterface>org.contikios.cooja.interfaces.RimeAddress</moteinterface>
       <moteinterface>org.contikios.cooja.interfaces.IPAddress</moteinterface>
@@ -283,4 +283,3 @@
     <location_y>12</location_y>
   </plugin>
 </simconf>
-

@@ -3,6 +3,7 @@
 #include "random.h"
 #include "net/netstack.h"
 #include "net/ipv6/simple-udp.h"
+#include "net/ipv6/uipbuf.h"
 
 #include "sys/log.h"
 #define LOG_MODULE "App"
@@ -17,12 +18,43 @@ static struct simple_udp_connection udp_conn;
 #define START_INTERVAL		(15 * CLOCK_SECOND)
 #define SEND_INTERVAL		  (60 * CLOCK_SECOND)
 
+#define UIP_IP_BUF       ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])
+
 static struct simple_udp_connection udp_conn;
 static uip_ipaddr_t server_ipaddr;
 
 /*---------------------------------------------------------------------------*/
-PROCESS(udp_client_process, "UDP client");
+PROCESS(udp_client_process, "UDP client -- packet debug");
 AUTOSTART_PROCESSES(&udp_client_process);
+/*---------------------------------------------------------------------------*/
+static enum netstack_ip_action
+ip_input(void)
+{
+  uint8_t proto = 0;
+  uipbuf_get_last_header(uip_buf, uip_len, &proto);
+  LOG_INFO("Incoming packet proto: %d from ", proto);
+  LOG_INFO_6ADDR(&UIP_IP_BUF->srcipaddr);
+  LOG_INFO_("\n");
+  return NETSTACK_IP_PROCESS;
+}
+/*---------------------------------------------------------------------------*/
+static enum netstack_ip_action
+ip_output(const linkaddr_t *localdest)
+{
+  uint8_t proto;
+  uint8_t is_me = 0;
+  uipbuf_get_last_header(uip_buf, uip_len, &proto);
+  is_me =  uip_ds6_is_my_addr(&UIP_IP_BUF->srcipaddr);
+  LOG_INFO("Outgoing packet (%s) proto: %d to ", is_me ? "send" : "fwd ", proto);
+  LOG_INFO_6ADDR(&UIP_IP_BUF->destipaddr);
+  LOG_INFO_("\n");
+  return NETSTACK_IP_PROCESS;
+}
+/*---------------------------------------------------------------------------*/
+struct netstack_ip_packet_processor packet_processor = {
+  .process_input = ip_input,
+  .process_output = ip_output
+};
 /*---------------------------------------------------------------------------*/
 static void
 udp_rx_callback(struct simple_udp_connection *c,
@@ -50,6 +82,9 @@ PROCESS_THREAD(udp_client_process, ev, data)
   /* Initialize UDP connection */
   simple_udp_register(&udp_conn, UDP_CLIENT_PORT, NULL,
                       UDP_SERVER_PORT, udp_rx_callback);
+
+  /* register packet processor */
+  netstack_ip_packet_processor_add(&packet_processor);
 
   etimer_set(&periodic_timer, random_rand() % SEND_INTERVAL);
   PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&periodic_timer));

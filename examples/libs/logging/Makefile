@@ -1,7 +1,5 @@
-CONTIKI_PROJECT = trickle-library
-
+CONTIKI_PROJECT = logging
 all: $(CONTIKI_PROJECT)
 
-CONTIKI = ../..
-
+CONTIKI = ../../..
 include $(CONTIKI)/Makefile.include
