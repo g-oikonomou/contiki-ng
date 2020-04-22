@@ -5,8 +5,8 @@ name: CI
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
-  push:
-    branches: [ wip/gh-actions ]
+#  push:
+#    branches: [ wip/gh-actions ]
   pull_request:
     branches: [ master, develop, release-* ]
 
@@ -87,10 +87,10 @@ jobs:
     - name: Push additional tag to dockerhub for master/develop
       if: env.DOCKER_NEED_PUSH == '1' && (github.ref == 'master' || github.ref == 'develop') 
       run: |
-        echo "This is a merge in branch $TRAVIS_BRANCH";
-        echo "Push also $DOCKER_BASE_IMG:$TRAVIS_BRANCH";
-        docker tag $DOCKER_IMG $DOCKER_BASE_IMG:$TRAVIS_BRANCH;
-        #docker push $DOCKER_BASE_IMG:$TRAVIS_BRANCH;
+        echo This is a merge in branch ${{ github.ref }}
+        echo Push also $DOCKER_BASE_IMG:${{ github.ref }}
+        docker tag $DOCKER_IMG $DOCKER_BASE_IMG:${{ github.ref }}
+        #docker push $DOCKER_BASE_IMG:${{ github.ref }}
 
     # Clone the repo used for out-of-tree builds if required
     - name: Clone the repo used for out-of-tree builds if required
