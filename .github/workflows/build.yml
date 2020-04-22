@@ -8,7 +8,7 @@ on:
   push:
     branches: [ wip/gh-actions ]
   pull_request:
-    branches: [ wip/gh-actions ]
+    branches: [ master, develop, release-* ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -69,8 +69,9 @@ jobs:
           docker build tools/docker -t $DOCKER_IMG
 
     - name: Push image to dockerhub
-      #if: github.repository == 'contiki-ng/contiki-ng' && github.even == 'pull_request'
+      #if: github.repository == 'contiki-ng/contiki-ng' && github.event == 'pull_request'
       run: |
+        echo ::set-env name=DOCKER_NEED_PUSH::1
         echo "This is a branch build that updates the container. Push image to Dockerhub"
         echo ${{ github.repository }}
         echo ${{ github.event_name }}
@@ -84,6 +85,7 @@ jobs:
     # If this was a merge on master or develop then push to dockerhub an
     # additional tag
     - name: Push additional tag to dockerhub for master/develop
+      if: env.DOCKER_NEED_PUSH == '1' && (github.ref == 'master' || github.ref == 'develop') 
       run: |
         echo "This is a merge in branch $TRAVIS_BRANCH";
         echo "Push also $DOCKER_BASE_IMG:$TRAVIS_BRANCH";
