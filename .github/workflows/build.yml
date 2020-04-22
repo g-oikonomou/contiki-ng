@@ -6,7 +6,7 @@ name: CI
 # events but only for the master branch
 on:
   push:
-    branches: [ wip/gh-actions ]
+    branches: [ wip/gh-actions, release-* ]
   pull_request:
     branches: [ master, develop, release-* ]
 
