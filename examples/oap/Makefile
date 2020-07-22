@@ -53,8 +53,14 @@ $(BOOTLOADER): FORCE
 $(GOLDEN_IMAGE): FORCE
 	$(MAKE) -C $(dir $@) TARGET=$(TARGET) BOARD=$(BOARD) $(notdir $@)
 
+OS_VERS := $(shell lsb_release -a 2>/dev/null | grep Description | awk '{ print $$2 "-" $$3 }')
+
 $(METADATA): $(GOLDEN_IMAGE)
+ifeq ($(OS_VERS), Ubuntu-20.04)
+	python3 $(GENERATE_METADATA) -o $@ -O $(METADATA_OFFSET) $<
+else
 	python $(GENERATE_METADATA) -o $@ -O $(METADATA_OFFSET) $<
+endif
 
 $(FINAL_IMAGE): $(BOOTLOADER) $(GOLDEN_IMAGE) $(METADATA) FORCE
 	srec_cat \
