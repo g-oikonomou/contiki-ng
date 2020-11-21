@@ -1,0 +1,1 @@
+MODULES_REL += arch/platform/$(TARGET)/common
