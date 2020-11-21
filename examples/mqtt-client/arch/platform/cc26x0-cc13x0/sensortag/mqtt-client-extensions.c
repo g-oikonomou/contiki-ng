@@ -31,10 +31,14 @@
 /*---------------------------------------------------------------------------*/
 #include "contiki.h"
 #include "builtin-sensors.h"
+#include "sensortag-ext.h"
 #include "mqtt-client.h"
 
 #include <string.h>
 /*---------------------------------------------------------------------------*/
-MQTT_CLIENT_EXTENSIONS(&builtin_sensors_batmon_temp,
-                       &builtin_sensors_batmon_volt);
+MQTT_CLIENT_EXTENSIONS(
+    &builtin_sensors_batmon_temp,
+    &builtin_sensors_batmon_volt,
+    &sensortag_ext_opt,
+);
 /*---------------------------------------------------------------------------*/
