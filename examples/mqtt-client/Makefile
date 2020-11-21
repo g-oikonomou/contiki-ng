@@ -10,6 +10,10 @@ MODULES += $(CONTIKI_NG_APP_LAYER_DIR)/mqtt
 
 MODULES_REL += arch/platform/$(TARGET)
 
+ifneq ($(BOARD),)
+  MODULES_REL += arch/platform/$(TARGET)/$(BOARD)
+endif
+
 PLATFORMS_ONLY = cc26x0-cc13x0 cc2538dk openmote zoul native simplelink cooja
 
 include $(CONTIKI)/Makefile.include
